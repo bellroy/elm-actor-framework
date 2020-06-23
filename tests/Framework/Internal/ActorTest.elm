@@ -25,8 +25,8 @@ test_fromComponent =
                 , onMsgOut = \_ -> Message.noOperation
                 }
                 componentCounter
-                |> (\actor -> actor.apply 1)
-                |> (\Instance -> Instance.view Fixtures.pid_1_2 (always Nothing))
+                |> (\{ apply } -> apply 1)
+                |> (\{ view } -> view Fixtures.pid_1_2 (always Nothing))
                 |> Expect.equal "1"
 
 
