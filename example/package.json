@@ -1,0 +1,18 @@
+{
+  "name": "example",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "elm-live": "^4.0.2"
+  },
+  "scripts": {
+    "start:counter": "elm-live ./src/Counter/Main.elm -- --debug",
+    "build:counter": "elm make src/Counter/Main.elm --output ../docs/counter.html",
+    "start:counters": "elm-live ./src/Counters/Main.elm -- --debug",
+    "build:counters": "elm make src/Counters/Main.elm --output ../docs/counters.html",
+    "start:spa": "elm-live ./src/Spa/Main.elm --pushstate -- --debug",
+    "build:spa": "elm make src/Spa/Main.elm --output ../docs/spa.html",
+    "build:all": "yarn run build:counter && yarn run build:counters && yarn run build:spa"
+  }
+}

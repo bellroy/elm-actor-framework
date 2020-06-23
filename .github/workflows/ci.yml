@@ -1,0 +1,43 @@
+---
+name: Continuous Integration
+on:
+  push:
+    branches-ignore:
+    - refs/tags/*_staging
+    - refs/tags/*_production
+jobs:
+  build:
+    runs-on: ubuntu-18.04
+    steps:
+    - name: Checkout branch
+      uses: actions/checkout@v2
+    - name: Extract branch name
+      shell: bash
+      run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+      id: extract_branch
+    - name: Set up Node
+      uses: actions/setup-node@v1
+      with:
+        node-version: 10.16.3
+    - name: Cache node modules
+      uses: actions/cache@v1
+      with:
+        path: node_modules
+        key: ${{ runner.OS }}-yarn-cache-${{ hashFiles('**/yarn.lock') }}${{ hashFiles('**/package.json')
+          }}"
+        restore-keys: "${{ runner.OS }}-yarn-cache-\n"
+    - run: yarn install --production --ignore-engines
+    - name: Yarn Test
+      run: yarn test
+    - name: Post to Slack if build fails
+      if: failure() && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/stable')
+      uses: pullreminders/slack-action@master
+      env:
+        SLACK_BOT_TOKEN: "${{ secrets.SLACK_BOT_TOKEN }}"
+      with:
+        args: '{\"channel\":\"C33574SJJ\",\"text\":\"* ${{ github.repository }} BUILD
+          FAILURE*\", \"attachments\": [{ \"fallback\": \"Failure summary\", \"color\":
+          \"#ff0000\", \"fields\": [{\"title\": \"Branch\", \"value\":\"${{ steps.extract_branch.outputs.branch
+          }}\"}, {\"title\": \"Who broke it\", \"value\":\"${{ github.actor }}\"},
+          { \"title\": \"Build output\", \"value\": \"https://github.com/${{ github.repository
+          }}/commit/${{ github.sha }}/checks\", \"short\": false }]}]}'

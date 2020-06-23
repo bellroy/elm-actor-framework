@@ -1,0 +1,12 @@
+{
+  "name": "elm-actor-framework",
+  "scripts": {
+    "test": "node --stack-size=65500 node_modules/.bin/elm-test",
+    "doc": "node node_modules/.bin/elm-doc-preview",
+    "coverage": "node node_modules/.bin/elm-coverage",
+    "coverage:open": "node node_modules/.bin/elm-coverage && open -a \"Google Chrome\" .coverage/coverage.html"
+  },
+  "dependencies": {
+    "elm-coverage": "^0.3.0"
+  }
+}
