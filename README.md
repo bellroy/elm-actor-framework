@@ -2,9 +2,8 @@
 
 An Actor Model implementation on top of the Elm Application Framework
 
-## Demo
+![Component > Actor > Process](https://github.com/tricycle/elm-actor-framework/blob/assets/component_actor_process.png)
 
-The example Application can be found in action [here](https://tricycle.github.io/system-actor-model/).
 
 ## Documentation
 
