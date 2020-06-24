@@ -31,7 +31,7 @@ type ProcessMethods componentModel appModel output frameworkMsg
 
 
 type alias Actor appFlags componentModel appModel output frameworkMsg =
-    { instanceMethods : ProcessMethods componentModel appModel output frameworkMsg
+    { processMethods : ProcessMethods componentModel appModel output frameworkMsg
     , init : ( Pid, appFlags ) -> ( appModel, frameworkMsg )
     , apply : componentModel -> Process appModel output frameworkMsg
     }
@@ -95,14 +95,14 @@ fromComponent arguments component =
             , subscriptions = subscriptions componentModel
             }
 
-        instanceMethods =
+        processMethods =
             ProcessMethods
                 { update = update
                 , subscriptions = subscriptions
                 , view = view
                 }
     in
-    { instanceMethods = instanceMethods
+    { processMethods = processMethods
     , init = init
     , apply = apply
     }

@@ -78,7 +78,7 @@ type alias Component appFlags componentModel componentMsgIn componentMsgOut outp
 
 {-| -}
 type alias Actor appFlags componentModel appModel output frameworkMsg =
-    { instanceMethods : ProcessMethods componentModel appModel output frameworkMsg
+    { processMethods : ProcessMethods componentModel appModel output frameworkMsg
     , init : ( Pid, appFlags ) -> ( appModel, frameworkMsg )
     , apply : componentModel -> Process appModel output frameworkMsg
     }
