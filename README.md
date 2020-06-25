@@ -254,9 +254,9 @@ The first next "clue" we have is our missing `factory` implementation.
 A factory's signature looks like;
 
 >```elm
->appActorNames
+>appActors
 >  -> ( Pid, appFlags )
->  -> ( appModel, FrameworkMessage appFlags appAddresses appActorNames appModel appMsg )
+>  -> ( appModel, FrameworkMessage appFlags appAddresses appActors appModel appMsg )
 >```
 
 We've already handled the type variables we see here when we defined our `Program`.
@@ -294,7 +294,7 @@ The record requires the following functions;
 - `fromAppMsg: appMsg -> Maybe componentMsgIn`
   This is almost the opposite of `toAppMsg`, given an `AppMsg` we might be able
   to return a `componentMsgIn` (a `Counter.Msg`).
-- `onMsgOut: { self: Pid, msgOut: componentMsgOut } -> FrameworkMessage ppFlags appAddresses appActorNames appModel appMsg`
+- `onMsgOut: { self: Pid, msgOut: componentMsgOut } -> FrameworkMessage ppFlags appAddresses appActors appModel appMsg`
   Our component doesn't have any `msgOut`'s so we can just return a NoOp from
   the `Framework.Message` module here to comply with the requested return type.
 
@@ -394,7 +394,7 @@ We can start our `Actors` by `spawn`-ing them.
 - ```elm appFlags```
   Just like a typical Elm app your actors could receive some flags at start up.
   We already set our app doesn't use though so we'll leave it to `()` for now.
-- ```appActorNames```
+- ```appActors```
   The actor you want to spawn  
 - ```(Pid -> Msg)```
   A callback function that will provide the newly created `Pid`.

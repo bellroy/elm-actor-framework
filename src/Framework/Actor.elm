@@ -105,10 +105,10 @@ fromComponent :
         { self : Pid
         , msgOut : componentMsgOut
         }
-        -> FrameworkMessage appFlags appAddresses appActorNames appModel appMsg
+        -> FrameworkMessage appFlags appAddresses appActors appModel appMsg
     }
-    -> Component appFlags componentModel componentMsgIn componentMsgOut output (FrameworkMessage appFlags appAddresses appActorNames appModel appMsg)
-    -> Actor appFlags componentModel appModel output (FrameworkMessage appFlags appAddresses appActorNames appModel appMsg)
+    -> Component appFlags componentModel componentMsgIn componentMsgOut output (FrameworkMessage appFlags appAddresses appActors appModel appMsg)
+    -> Actor appFlags componentModel appModel output (FrameworkMessage appFlags appAddresses appActors appModel appMsg)
 fromComponent =
     Internal.fromComponent
 

@@ -10,7 +10,7 @@ import Framework.Internal.Message as Message exposing (FrameworkMessage)
 import Framework.Internal.Pid exposing (Pid)
 
 
-type alias Arguments appFlags appAddresses appActorNames appModel appMsg componentModel componentMsgIn componentMsgOut =
+type alias Arguments appFlags appAddresses appActors appModel appMsg componentModel componentMsgIn componentMsgOut =
     { toAppModel : componentModel -> appModel
     , toAppMsg : componentMsgIn -> appMsg
     , fromAppMsg : appMsg -> Maybe componentMsgIn
@@ -18,7 +18,7 @@ type alias Arguments appFlags appAddresses appActorNames appModel appMsg compone
         { self : Pid
         , msgOut : componentMsgOut
         }
-        -> FrameworkMessage appFlags appAddresses appActorNames appModel appMsg
+        -> FrameworkMessage appFlags appAddresses appActors appModel appMsg
     }
 
 
@@ -71,10 +71,10 @@ fromComponent :
         { self : Pid
         , msgOut : componentMsgOut
         }
-        -> FrameworkMessage appFlags appAddresses appActorNames appModel appMsg
+        -> FrameworkMessage appFlags appAddresses appActors appModel appMsg
     }
-    -> Component appFlags componentModel componentMsgIn componentMsgOut output (FrameworkMessage appFlags appAddresses appActorNames appModel appMsg)
-    -> Actor appFlags componentModel appModel output (FrameworkMessage appFlags appAddresses appActorNames appModel appMsg)
+    -> Component appFlags componentModel componentMsgIn componentMsgOut output (FrameworkMessage appFlags appAddresses appActors appModel appMsg)
+    -> Actor appFlags componentModel appModel output (FrameworkMessage appFlags appAddresses appActors appModel appMsg)
 fromComponent arguments component =
     let
         init =
@@ -109,9 +109,9 @@ fromComponent arguments component =
 
 
 fromComponentView :
-    Arguments appFlags appAddresses appActorNames appModel appMsg componentModel componentMsgIn componentMsgOut
+    Arguments appFlags appAddresses appActors appModel appMsg componentModel componentMsgIn componentMsgOut
     ->
-        ((componentMsgIn -> FrameworkMessage appFlags appAddresses appActorNames appModel appMsg)
+        ((componentMsgIn -> FrameworkMessage appFlags appAddresses appActors appModel appMsg)
          -> componentModel
          -> (Pid -> Maybe output)
          -> output
@@ -125,29 +125,29 @@ fromComponentView { toAppMsg } view componentModel pid =
 
 
 fromComponentInit :
-    Arguments appFlags appAddresses appActorNames appModel appMsg componentModel componentMsgIn componentMsgOut
+    Arguments appFlags appAddresses appActors appModel appMsg componentModel componentMsgIn componentMsgOut
     ->
         (( Pid, appFlags )
          -> ( componentModel, List componentMsgOut, Cmd componentMsgIn )
         )
     -> ( Pid, appFlags )
-    -> ( appModel, FrameworkMessage appFlags appAddresses appActorNames appModel appMsg )
+    -> ( appModel, FrameworkMessage appFlags appAddresses appActors appModel appMsg )
 fromComponentInit arguments init ( pid, appFlags ) =
     init ( pid, appFlags )
         |> wrapToTuple arguments pid
 
 
 fromComponentUpdate :
-    Arguments appFlags appAddresses appActorNames appModel appMsg componentModel componentMsgIn componentMsgOut
+    Arguments appFlags appAddresses appActors appModel appMsg componentModel componentMsgIn componentMsgOut
     ->
         (componentMsgIn
          -> componentModel
          -> ( componentModel, List componentMsgOut, Cmd componentMsgIn )
         )
     -> componentModel
-    -> FrameworkMessage appFlags appAddresses appActorNames appModel appMsg
+    -> FrameworkMessage appFlags appAddresses appActors appModel appMsg
     -> Pid
-    -> ( appModel, FrameworkMessage appFlags appAddresses appActorNames appModel appMsg )
+    -> ( appModel, FrameworkMessage appFlags appAddresses appActors appModel appMsg )
 fromComponentUpdate arguments update componentModel msg pid =
     case msg of
         Message.AppMsg appMsg ->
@@ -164,11 +164,11 @@ fromComponentUpdate arguments update componentModel msg pid =
 
 
 fromComponentSubscriptions :
-    Arguments appFlags appAddresses appActorNames appModel appMsg componentModel componentMsgIn componentMsgOut
+    Arguments appFlags appAddresses appActors appModel appMsg componentModel componentMsgIn componentMsgOut
     -> (componentModel -> Sub componentMsgIn)
     -> componentModel
     -> Pid
-    -> Sub (FrameworkMessage appFlags appAddresses appActorNames appModel appMsg)
+    -> Sub (FrameworkMessage appFlags appAddresses appActors appModel appMsg)
 fromComponentSubscriptions { toAppMsg } subs componentModel pid =
     if subs componentModel == Sub.none then
         Sub.none
@@ -180,10 +180,10 @@ fromComponentSubscriptions { toAppMsg } subs componentModel pid =
 
 
 wrapToTuple :
-    Arguments appFlags appAddresses appActorNames appModel appMsg componentModel componentMsgIn componentMsgOut
+    Arguments appFlags appAddresses appActors appModel appMsg componentModel componentMsgIn componentMsgOut
     -> Pid
     -> ( componentModel, List componentMsgOut, Cmd componentMsgIn )
-    -> ( appModel, FrameworkMessage appFlags appAddresses appActorNames appModel appMsg )
+    -> ( appModel, FrameworkMessage appFlags appAddresses appActors appModel appMsg )
 wrapToTuple { toAppModel, toAppMsg, onMsgOut } pid ( model, msgsOut, cmd ) =
     msgsOut
         |> List.map
