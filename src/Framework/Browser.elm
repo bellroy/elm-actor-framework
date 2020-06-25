@@ -74,16 +74,16 @@ type alias Program elmFlags appFlags appAddresses appActorNames appModel appMsg 
 {-| Create an HTML element managed by Elm. The resulting elements are easy to embed in larger JavaScript projects, and lots of companies that use Elm started with this approach! Try it out on something small. If it works, great, do more! If not, revert, no big deal.
 -}
 element :
-    { init :
-        elmFlags
-        -> FrameworkMessage appFlags appAddresses appActorNames appModel appMsg
-    , factory :
+    { factory :
         appActorNames
         -> ( Pid, appFlags )
         -> ( appModel, FrameworkMessage appFlags appAddresses appActorNames appModel appMsg )
     , apply :
         appModel
         -> Process appModel output (FrameworkMessage appFlags appAddresses appActorNames appModel appMsg)
+    , init :
+        elmFlags
+        -> FrameworkMessage appFlags appAddresses appActorNames appModel appMsg
     , view :
         List output
         -> Html (FrameworkMessage appFlags appAddresses appActorNames appModel appMsg)
@@ -108,16 +108,16 @@ element { init, factory, apply, view } =
 This expands upon what element can do in that view now gives you control over the <title> and <body>.
 -}
 document :
-    { init :
-        elmFlags
-        -> FrameworkMessage appFlags appAddresses appActorNames appModel appMsg
-    , factory :
+    { factory :
         appActorNames
         -> ( Pid, appFlags )
         -> ( appModel, FrameworkMessage appFlags appAddresses appActorNames appModel appMsg )
     , apply :
         appModel
         -> Process appModel output (FrameworkMessage appFlags appAddresses appActorNames appModel appMsg)
+    , init :
+        elmFlags
+        -> FrameworkMessage appFlags appAddresses appActorNames appModel appMsg
     , view :
         List output
         -> List (Html (FrameworkMessage appFlags appAddresses appActorNames appModel appMsg))
@@ -141,18 +141,18 @@ document args =
 {-| Create an application that manages Url changes.
 -}
 application :
-    { init :
-        elmFlags
-        -> Url
-        -> Key
-        -> FrameworkMessage appFlags appAddresses appActorNames appModel appMsg
-    , factory :
+    { factory :
         appActorNames
         -> ( Pid, appFlags )
         -> ( appModel, FrameworkMessage appFlags appAddresses appActorNames appModel appMsg )
     , apply :
         appModel
         -> Process appModel output (FrameworkMessage appFlags appAddresses appActorNames appModel appMsg)
+    , init :
+        elmFlags
+        -> Url
+        -> Key
+        -> FrameworkMessage appFlags appAddresses appActorNames appModel appMsg
     , view :
         List output
         -> List (Html (FrameworkMessage appFlags appAddresses appActorNames appModel appMsg))

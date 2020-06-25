@@ -53,13 +53,13 @@ init _ =
 
 
 factory : AppActors -> ( Pid, AppFlags ) -> ( AppModel, Msg )
-factory actorName ( pid, appFlags ) =
+factory actorName =
     case actorName of
         Counters ->
-            actorCounters.init ( pid, appFlags )
+            actorCounters.init  
 
         Counter ->
-            actorCounter.init ( pid, appFlags )
+            actorCounter.init 
 
 
 apply : AppModel ->  Process AppModel (Html Msg) Msg
