@@ -23,10 +23,10 @@ It's easy to run them locally;
   In order to run the `Counter` example;
   - `yarn run start:counter`
 
-  In order to tun the multiple `Counters` example;
+  In order to run the multiple `Counters` example;
   - `yarn run start:counters`
 
-  In order to tun the Single page App (`SPA`) example;
+  In order to run the Single page App (`SPA`) example;
   - `yarn run start:spa`
 - visit `http://localhost:8000` in your desired browser.
 
@@ -186,7 +186,7 @@ We will also require the `Framework.Message` and `Framework.Actor` modules later
 
 ```elm
 import Framework.Message exposing (FrameworkMessage, noOperation, batch, spawn, addToView)
-import Framework.Actor exposing (Actor, Process, fromComponent)
+import Framework.Actor exposing (Actor, Process, Pid, fromComponent)
 ```
 
 Import the Counter we just created, not that the Counter module itself doesn't 
@@ -333,7 +333,7 @@ a function that provides us with the required signature and by creating our
 
 type alias Msg = FrameworkMessage () () AppActors AppModel AppMsg
 
-factory: AppActors -> a -> (AppModel, Msg)
+factory: AppActors -> ( Pid, () ) -> (AppModel, Msg)
 factory actor =
     case actor of
         Counter ->
