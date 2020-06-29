@@ -14,7 +14,8 @@ The API documentation is hosted on the [Elm package website](https://package.elm
 
 There are three examples in the example folder.
 
-It's easy to run them locally;
+The output can be [seen online](https://tricycle.github.io/elm-actor-framework)
+and it's easy to run them locally;
 
 - Clone this repository.
 - Navigate to the example folder; `cd example`.
