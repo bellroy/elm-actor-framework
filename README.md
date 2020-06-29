@@ -16,21 +16,14 @@ There are three examples in the example folder.
 
 It's easy to run them locally;
 
-- clone this repository.
-- navigate to the example folder; `cd example`.
-- on the root of the example folder run `yarn install`
-- Run the live example
-  In order to run the `Counter` example;
-  - `yarn run start:counter`
-
-  In order to run the multiple `Counters` example;
-  - `yarn run start:counters`
-
-  In order to run the Single page App (`SPA`) example;
-  - `yarn run start:spa`
-- visit `http://localhost:8000` in your desired browser.
-
-`cd example && elm reactor`
+- Clone this repository.
+- Navigate to the example folder; `cd example`.
+- On the root of the example folder run `yarn install`
+- Run one of the live examples;
+  - **Counter** example `yarn run start:counter`
+  - Multiple **Counters** example `yarn run start:counters`
+  - A Simple **SPA** (Single Page Application) example `yarn run start:spa`
+- Visit `http://localhost:8000` in your desired browser.
 
 ---
 
@@ -58,8 +51,6 @@ Let's start with setting up a simple **Counter** `Component`.
 The `Component` is a record which signature can be imported from the 
 `Framework.Actor` module. It looks almost the same as Elm.Browser's embed
 function so this is going to be easy!
-
-
 
 ---
 `File: Component/Counter.elm`
