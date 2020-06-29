@@ -1,7 +1,7 @@
 module Counter.Main exposing (factory, main)
 
 import Counter.Counter as Counter
-import Framework.Actor as Actor exposing (Pid, Actor, Process)
+import Framework.Actor as Actor exposing (Actor, Pid, Process)
 import Framework.Browser as Browser exposing (Program)
 import Framework.Message as Message exposing (FrameworkMessage)
 import Html exposing (Html)
@@ -46,14 +46,14 @@ init _ =
         ]
 
 
-factory : AppActors -> ( Pid, AppFlags ) -> ( AppModel, Msg )
-factory actorName ( pid, appFlags ) =
+factory : AppActors -> (Pid, AppFlags) -> ( AppModel, Msg )
+factory actorName =
     case actorName of
         Counter ->
-            actorCounter.init ( pid, appFlags )
+            actorCounter.init
 
 
-apply : AppModel ->  Process AppModel (Html Msg) Msg
+apply : AppModel -> Process AppModel (Html Msg) Msg
 apply appModel =
     case appModel of
         CounterModel counterModel ->

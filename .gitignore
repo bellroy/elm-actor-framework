@@ -6,6 +6,5 @@ package-lock.json
 elm-stuff
 .elm-doc
 tests/VerifyExamples
-docs
 example/*.html
 example/*.js

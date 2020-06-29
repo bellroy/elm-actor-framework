@@ -61,34 +61,34 @@ import Url exposing (Url)
 {-| All of the functions in this module will return a Program.
 A Program describes an Elm program! How does it react to input? Does it show anything on screen? Etc.
 -}
-type alias Program elmFlags appFlags appAddresses appActorNames appModel appMsg =
+type alias Program elmFlags appFlags appAddresses appActors appModel appMsg =
     Platform.Program
         --
         elmFlags
         --
         (FrameworkModel appAddresses appModel)
         --
-        (FrameworkMessage appFlags appAddresses appActorNames appModel appMsg)
+        (FrameworkMessage appFlags appAddresses appActors appModel appMsg)
 
 
 {-| Create an HTML element managed by Elm. The resulting elements are easy to embed in larger JavaScript projects, and lots of companies that use Elm started with this approach! Try it out on something small. If it works, great, do more! If not, revert, no big deal.
 -}
 element :
-    { init :
-        elmFlags
-        -> FrameworkMessage appFlags appAddresses appActorNames appModel appMsg
-    , factory :
-        appActorNames
+    { factory :
+        appActors
         -> ( Pid, appFlags )
-        -> ( appModel, FrameworkMessage appFlags appAddresses appActorNames appModel appMsg )
+        -> ( appModel, FrameworkMessage appFlags appAddresses appActors appModel appMsg )
     , apply :
         appModel
-        -> Process appModel output (FrameworkMessage appFlags appAddresses appActorNames appModel appMsg)
+        -> Process appModel output (FrameworkMessage appFlags appAddresses appActors appModel appMsg)
+    , init :
+        elmFlags
+        -> FrameworkMessage appFlags appAddresses appActors appModel appMsg
     , view :
         List output
-        -> Html (FrameworkMessage appFlags appAddresses appActorNames appModel appMsg)
+        -> Html (FrameworkMessage appFlags appAddresses appActors appModel appMsg)
     }
-    -> Program elmFlags appFlags appAddresses appActorNames appModel appMsg
+    -> Program elmFlags appFlags appAddresses appActors appModel appMsg
 element { init, factory, apply, view } =
     let
         updateArgs =
@@ -108,21 +108,21 @@ element { init, factory, apply, view } =
 This expands upon what element can do in that view now gives you control over the <title> and <body>.
 -}
 document :
-    { init :
-        elmFlags
-        -> FrameworkMessage appFlags appAddresses appActorNames appModel appMsg
-    , factory :
-        appActorNames
+    { factory :
+        appActors
         -> ( Pid, appFlags )
-        -> ( appModel, FrameworkMessage appFlags appAddresses appActorNames appModel appMsg )
+        -> ( appModel, FrameworkMessage appFlags appAddresses appActors appModel appMsg )
     , apply :
         appModel
-        -> Process appModel output (FrameworkMessage appFlags appAddresses appActorNames appModel appMsg)
+        -> Process appModel output (FrameworkMessage appFlags appAddresses appActors appModel appMsg)
+    , init :
+        elmFlags
+        -> FrameworkMessage appFlags appAddresses appActors appModel appMsg
     , view :
         List output
-        -> List (Html (FrameworkMessage appFlags appAddresses appActorNames appModel appMsg))
+        -> List (Html (FrameworkMessage appFlags appAddresses appActors appModel appMsg))
     }
-    -> Program elmFlags appFlags appAddresses appActorNames appModel appMsg
+    -> Program elmFlags appFlags appAddresses appActors appModel appMsg
 document args =
     let
         updateArgs =
@@ -141,29 +141,29 @@ document args =
 {-| Create an application that manages Url changes.
 -}
 application :
-    { init :
+    { factory :
+        appActors
+        -> ( Pid, appFlags )
+        -> ( appModel, FrameworkMessage appFlags appAddresses appActors appModel appMsg )
+    , apply :
+        appModel
+        -> Process appModel output (FrameworkMessage appFlags appAddresses appActors appModel appMsg)
+    , init :
         elmFlags
         -> Url
         -> Key
-        -> FrameworkMessage appFlags appAddresses appActorNames appModel appMsg
-    , factory :
-        appActorNames
-        -> ( Pid, appFlags )
-        -> ( appModel, FrameworkMessage appFlags appAddresses appActorNames appModel appMsg )
-    , apply :
-        appModel
-        -> Process appModel output (FrameworkMessage appFlags appAddresses appActorNames appModel appMsg)
+        -> FrameworkMessage appFlags appAddresses appActors appModel appMsg
     , view :
         List output
-        -> List (Html (FrameworkMessage appFlags appAddresses appActorNames appModel appMsg))
+        -> List (Html (FrameworkMessage appFlags appAddresses appActors appModel appMsg))
     , onUrlRequest :
         UrlRequest
-        -> FrameworkMessage appFlags appAddresses appActorNames appModel appMsg
+        -> FrameworkMessage appFlags appAddresses appActors appModel appMsg
     , onUrlChange :
         Url
-        -> FrameworkMessage appFlags appAddresses appActorNames appModel appMsg
+        -> FrameworkMessage appFlags appAddresses appActors appModel appMsg
     }
-    -> Program elmFlags appFlags appAddresses appActorNames appModel appMsg
+    -> Program elmFlags appFlags appAddresses appActors appModel appMsg
 application args =
     let
         updateArgs =

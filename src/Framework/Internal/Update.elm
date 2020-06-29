@@ -7,23 +7,23 @@ import Framework.Internal.Model as Model exposing (FrameworkModel)
 import Framework.Internal.Pid as Pid exposing (Pid)
 
 
-type alias Args appFlags appAddresses appActorNames appModel output appMsg =
+type alias Args appFlags appAddresses appActors appModel output appMsg =
     { factory :
-        appActorNames
+        appActors
         -> ( Pid, appFlags )
-        -> ( appModel, FrameworkMessage appFlags appAddresses appActorNames appModel appMsg )
+        -> ( appModel, FrameworkMessage appFlags appAddresses appActors appModel appMsg )
     , apply :
         appModel
-        -> Process appModel output (FrameworkMessage appFlags appAddresses appActorNames appModel appMsg)
+        -> Process appModel output (FrameworkMessage appFlags appAddresses appActors appModel appMsg)
     }
 
 
 update :
-    Args appFlags appAddresses appActorNames appModel output appMsg
+    Args appFlags appAddresses appActors appModel output appMsg
     -> Maybe Pid
-    -> FrameworkMessage appFlags appAddresses appActorNames appModel appMsg
+    -> FrameworkMessage appFlags appAddresses appActors appModel appMsg
     -> FrameworkModel appAddresses appModel
-    -> ( FrameworkModel appAddresses appModel, Cmd (FrameworkMessage appFlags appAddresses appActorNames appModel appMsg) )
+    -> ( FrameworkModel appAddresses appModel, Cmd (FrameworkMessage appFlags appAddresses appActors appModel appMsg) )
 update ({ factory, apply } as args) maybePid msg model =
     case msg of
         AppMsg _ ->
@@ -116,11 +116,11 @@ update ({ factory, apply } as args) maybePid msg model =
 
 
 andThen :
-    Args appFlags appAddresses appActorNames appModel output appMsg
+    Args appFlags appAddresses appActors appModel output appMsg
     -> Maybe Pid
-    -> FrameworkMessage appFlags appAddresses appActorNames appModel appMsg
-    -> ( FrameworkModel appAddresses appModel, Cmd (FrameworkMessage appFlags appAddresses appActorNames appModel appMsg) )
-    -> ( FrameworkModel appAddresses appModel, Cmd (FrameworkMessage appFlags appAddresses appActorNames appModel appMsg) )
+    -> FrameworkMessage appFlags appAddresses appActors appModel appMsg
+    -> ( FrameworkModel appAddresses appModel, Cmd (FrameworkMessage appFlags appAddresses appActors appModel appMsg) )
+    -> ( FrameworkModel appAddresses appModel, Cmd (FrameworkMessage appFlags appAddresses appActors appModel appMsg) )
 andThen args maybePid msg ( model, cmd ) =
     update args maybePid msg model
         |> Tuple.mapSecond (List.singleton >> (++) [ cmd ] >> Cmd.batch)

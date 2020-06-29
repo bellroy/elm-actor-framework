@@ -74,8 +74,8 @@ import Framework.Internal.Pid exposing (Pid)
 
 
 {-| -}
-type alias FrameworkMessage appFlags appAddresses appActorNames appModel appMsg =
-    Internal.FrameworkMessage appFlags appAddresses appActorNames appModel appMsg
+type alias FrameworkMessage appFlags appAddresses appActors appModel appMsg =
+    Internal.FrameworkMessage appFlags appAddresses appActors appModel appMsg
 
 
 {-| Spawn an Actor
@@ -99,9 +99,9 @@ type alias FrameworkMessage appFlags appAddresses appActorNames appModel appMsg 
 -}
 spawn :
     appFlags
-    -> appActorNames
-    -> (Pid -> FrameworkMessage appFlags appAddresses appActorNames appModel appMsg)
-    -> FrameworkMessage appFlags appAddresses appActorNames appModel appMsg
+    -> appActors
+    -> (Pid -> FrameworkMessage appFlags appAddresses appActors appModel appMsg)
+    -> FrameworkMessage appFlags appAddresses appActors appModel appMsg
 spawn =
     Internal.spawn
 
@@ -116,7 +116,7 @@ If the process is part of the applications view it will be removed.
     stopProcess pid
 
 -}
-stopProcess : Pid -> FrameworkMessage appFlags appAddresses appActorNames appModel appMsg
+stopProcess : Pid -> FrameworkMessage appFlags appAddresses appActors appModel appMsg
 stopProcess =
     Internal.stopProcess
 
@@ -132,7 +132,7 @@ order you have added the Pids to the applications view using this function.
     -- applications view.
 
 -}
-addToView : Pid -> FrameworkMessage appFlags appAddresses appActorNames appModel appMsg
+addToView : Pid -> FrameworkMessage appFlags appAddresses appActors appModel appMsg
 addToView =
     Internal.addToView
 
@@ -151,21 +151,21 @@ Once a process is listed under an address you can send it messages by using
     -- same address (AllCounters).
 
 -}
-populateAddress : appAddresses -> Pid -> FrameworkMessage appFlags appAddresses appActorNames appModel appMsg
+populateAddress : appAddresses -> Pid -> FrameworkMessage appFlags appAddresses appActors appModel appMsg
 populateAddress =
     Internal.populateAddress
 
 
 {-| Remove a process from the applications view
 -}
-removeFromView : Pid -> FrameworkMessage appFlags appAddresses appActorNames appModel appMsg
+removeFromView : Pid -> FrameworkMessage appFlags appAddresses appActors appModel appMsg
 removeFromView =
     Internal.removeFromView
 
 
 {-| Remove a process from the given address
 -}
-removeFromAddress : appAddresses -> Pid -> FrameworkMessage appFlags appAddresses appActorNames appModel appMsg
+removeFromAddress : appAddresses -> Pid -> FrameworkMessage appFlags appAddresses appActors appModel appMsg
 removeFromAddress =
     Internal.removeFromAddress
 
@@ -178,7 +178,7 @@ removeFromAddress =
 sendToPid :
     Pid
     -> appMsg
-    -> FrameworkMessage appFlags appAddresses appActorNames appModel appMsg
+    -> FrameworkMessage appFlags appAddresses appActors appModel appMsg
 sendToPid =
     Internal.sendToPid
 
@@ -189,7 +189,7 @@ receive.
     sendToAddress AllCounters (CounterMsg Increment)
 
 -}
-sendToAddress : appAddresses -> appMsg -> FrameworkMessage appFlags appAddresses appActorNames appModel appMsg
+sendToAddress : appAddresses -> appMsg -> FrameworkMessage appFlags appAddresses appActors appModel appMsg
 sendToAddress =
     Internal.sendToAddress
 
@@ -204,8 +204,8 @@ sendToAddress =
 
 -}
 batch :
-    List (FrameworkMessage appFlags appAddresses appActorNames appModel appMsg)
-    -> FrameworkMessage appFlags appAddresses appActorNames appModel appMsg
+    List (FrameworkMessage appFlags appAddresses appActors appModel appMsg)
+    -> FrameworkMessage appFlags appAddresses appActors appModel appMsg
 batch =
     Internal.batch
 
@@ -217,7 +217,7 @@ batch =
     -- Pid by returning noOperation.
 
 -}
-noOperation : FrameworkMessage appFlags appAddresses appActorNames appModel appMsg
+noOperation : FrameworkMessage appFlags appAddresses appActors appModel appMsg
 noOperation =
     Internal.noOperation
 
@@ -236,6 +236,6 @@ This only works when using Browser.document or Browser.application.
     updateDocumenTitle "New Title"
 
 -}
-updateDocumentTitle : String -> FrameworkMessage appFlags appAddresses appActorNames appModel appMsg
+updateDocumentTitle : String -> FrameworkMessage appFlags appAddresses appActors appModel appMsg
 updateDocumentTitle =
     Internal.updateDocumentTitle

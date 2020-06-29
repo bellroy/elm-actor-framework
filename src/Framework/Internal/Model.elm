@@ -64,15 +64,15 @@ getInstance pid { instances } =
 
 
 spawnInstance :
-    (appActorNames
+    (appActors
      -> ( Pid, appFlags )
-     -> ( appModel, FrameworkMessage appFlags appAddresses appActorNames appModel appMsg )
+     -> ( appModel, FrameworkMessage appFlags appAddresses appActors appModel appMsg )
     )
     -> Pid
-    -> appActorNames
+    -> appActors
     -> appFlags
     -> FrameworkModel appAddresses appModel
-    -> ( FrameworkModel appAddresses appModel, FrameworkMessage appFlags appAddresses appActorNames appModel appMsg )
+    -> ( FrameworkModel appAddresses appModel, FrameworkMessage appFlags appAddresses appActors appModel appMsg )
 spawnInstance factory spawnedBy actorName flags model =
     let
         newPid =
