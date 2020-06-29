@@ -3,6 +3,10 @@ module Framework.Internal.Actor exposing
     , Component
     , Process
     , ProcessMethods
+    , altInit
+    , altSubscriptions
+    , altUpdate
+    , altView
     , fromComponent
     )
 
@@ -60,6 +64,66 @@ type alias Component appFlags componentModel componentMsgIn componentMsgOut outp
         -> componentModel
         -> (Pid -> Maybe output)
         -> output
+    }
+
+
+altInit :
+    ((( Pid, a ) -> ( componentModel, List componentMsgOut, Cmd componentMsgIn ))
+     -> ( Pid, appFlags )
+     -> ( componentModel, List componentMsgOut, Cmd componentMsgIn )
+    )
+    -> Component a componentModel componentMsgIn componentMsgOut output frameworkMsg
+    -> Component appFlags componentModel componentMsgIn componentMsgOut output frameworkMsg
+altInit f { init, update, subscriptions, view } =
+    { init = f init
+    , update = update
+    , subscriptions = subscriptions
+    , view = view
+    }
+
+
+altUpdate :
+    ((componentMsgIn -> componentModel -> ( componentModel, List componentMsgOut, Cmd componentMsgIn ))
+     -> componentMsgIn
+     -> componentModel
+     -> ( componentModel, List componentMsgOut, Cmd componentMsgIn )
+    )
+    -> Component appFlags componentModel componentMsgIn componentMsgOut output frameworkMsg
+    -> Component appFlags componentModel componentMsgIn componentMsgOut output frameworkMsg
+altUpdate f { init, update, subscriptions, view } =
+    { init = init
+    , update = f update
+    , subscriptions = subscriptions
+    , view = view
+    }
+
+
+altSubscriptions :
+    ((componentModel -> Sub componentMsgIn)
+     -> componentModel
+     -> Sub componentMsgIn
+    )
+    -> Component appFlags componentModel componentMsgIn componentMsgOut output frameworkMsg
+    -> Component appFlags componentModel componentMsgIn componentMsgOut output frameworkMsg
+altSubscriptions f { init, update, subscriptions, view } =
+    { init = init
+    , update = update
+    , subscriptions = f subscriptions
+    , view = view
+    }
+
+
+altView :
+    (((componentMsgIn -> frameworkMsg) -> componentModel -> (Pid -> Maybe outputA) -> outputA)
+     -> ((componentMsgIn -> frameworkMsg) -> componentModel -> (Pid -> Maybe outputB) -> outputB)
+    )
+    -> Component appFlags componentModel componentMsgIn componentMsgOut outputA frameworkMsg
+    -> Component appFlags componentModel componentMsgIn componentMsgOut outputB frameworkMsg
+altView f { init, update, subscriptions, view } =
+    { init = init
+    , update = update
+    , subscriptions = subscriptions
+    , view = f view
     }
 
 

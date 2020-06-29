@@ -80,19 +80,20 @@ type alias FrameworkMessage appFlags appAddresses appActors appModel appMsg =
 
 {-| Spawn an Actor
 
-    spawn Counter addToView
+    spawn () Counter addToView
     -- Spawns a `Counter` and adds it to your
     -- applications view.
 
-    spawn Counter (\_ -> noOperation)
-    -- Spawns a `Coutner` and doesn't do anything with
+    spawn () Counter (\_ -> noOperation)
+    -- Spawns a `Counter` and doesn't do anything with
     -- the newly retrieved Pid.
 
-    spawn Counter (\pid -> batch [
+    spawn 10 Counter (\pid -> batch [
           addToView pid
         , populateAddress AllCounters pid
     ]
-    -- Spawns a `Counter` and adds it to your
+    -- Spawns a `Counter` and passes it some appFlags
+    -- (Int 10) then adds it to your
     -- applications view and populates an
     -- address `AllCounters`.
 

@@ -2,7 +2,9 @@ module Framework.Actor exposing
     ( Component
     , Actor, fromComponent
     , ProcessMethods, Process
-    , Pid, spawnedBy, pidCompare, pidEquals, pidToInt, pidToString
+    , Pid, spawnedBy
+    , altInit, altUpdate, altSubscriptions, altView
+    , pidCompare, pidEquals, pidToInt, pidToString
     )
 
 {-|
@@ -24,19 +26,35 @@ module Framework.Actor exposing
   - [Process](#Process)
   - [Pid](#Pid)
   - [spawnedBy](#spawnedBy)
-  - [pidCompare](#compare)
-  - [pidEquals](#equals)
-  - [pidToInt](#toInt)
-  - [pidToString](#toString)
+
+**Component Utility**
+
+  - [altInit](#altInit)
+  - [altUpdate](#altUpdate)
+  - [altSubscriptions](#altSubscriptions)
+  - [altView](#altView)
+
+**Process Utility**
+
+  - [pidCompare](#pidCompare)
+  - [pidEquals](#pidEquals)
+  - [pidToInt](#pidToInt)
+  - [pidToString](#pidToString)
 
 ---
 
+
+# Component
+
 @docs Component
+
+
+# Actor
 
 @docs Actor, fromComponent
 
 
-# Result types
+# Process
 
 @docs ProcessMethods, Process
 
@@ -47,7 +65,17 @@ The PID also holds information about who spawned (started) the process.
 
 # Process Identifier
 
-@docs Pid, spawnedBy, pidCompare, pidEquals, pidToInt, pidToString
+@docs Pid, spawnedBy
+
+
+# Component Utility
+
+@docs altInit, altUpdate, altSubscriptions, altView
+
+
+# Process Utility
+
+@docs pidCompare, pidEquals, pidToInt, pidToString
 
 -}
 
@@ -74,6 +102,58 @@ type alias Component appFlags componentModel componentMsgIn componentMsgOut outp
         -> (Pid -> Maybe output)
         -> output
     }
+
+
+{-| Transform your components init function
+-}
+altInit :
+    ((( Pid, a ) -> ( componentModel, List componentMsgOut, Cmd componentMsgIn ))
+     -> ( Pid, appFlags )
+     -> ( componentModel, List componentMsgOut, Cmd componentMsgIn )
+    )
+    -> Component a componentModel componentMsgIn componentMsgOut output frameworkMsg
+    -> Component appFlags componentModel componentMsgIn componentMsgOut output frameworkMsg
+altInit =
+    Internal.altInit
+
+
+{-| Transform your components update function
+-}
+altUpdate :
+    ((componentMsgIn -> componentModel -> ( componentModel, List componentMsgOut, Cmd componentMsgIn ))
+     -> componentMsgIn
+     -> componentModel
+     -> ( componentModel, List componentMsgOut, Cmd componentMsgIn )
+    )
+    -> Component appFlags componentModel componentMsgIn componentMsgOut output frameworkMsg
+    -> Component appFlags componentModel componentMsgIn componentMsgOut output frameworkMsg
+altUpdate =
+    Internal.altUpdate
+
+
+{-| Transform your components subscriptions function
+-}
+altSubscriptions :
+    ((componentModel -> Sub componentMsgIn)
+     -> componentModel
+     -> Sub componentMsgIn
+    )
+    -> Component appFlags componentModel componentMsgIn componentMsgOut output frameworkMsg
+    -> Component appFlags componentModel componentMsgIn componentMsgOut output frameworkMsg
+altSubscriptions =
+    Internal.altSubscriptions
+
+
+{-| Transform your components view function
+-}
+altView :
+    (((componentMsgIn -> frameworkMsg) -> componentModel -> (Pid -> Maybe outputA) -> outputA)
+     -> ((componentMsgIn -> frameworkMsg) -> componentModel -> (Pid -> Maybe outputB) -> outputB)
+    )
+    -> Component appFlags componentModel componentMsgIn componentMsgOut outputA frameworkMsg
+    -> Component appFlags componentModel componentMsgIn componentMsgOut outputB frameworkMsg
+altView =
+    Internal.altView
 
 
 {-| -}
