@@ -46,7 +46,7 @@ init _ =
         ]
 
 
-factory : AppActors -> a -> ( AppModel, Msg )
+factory : AppActors -> (Pid, AppFlags) -> ( AppModel, Msg )
 factory actorName =
     case actorName of
         Counter ->
