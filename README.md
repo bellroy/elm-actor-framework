@@ -29,6 +29,14 @@ and it's easy to run them locally;
   - A Simple **SPA** (Single Page Application) example `yarn run start:spa`
 - Visit `http://localhost:8000` in your desired browser.
 
+## Templates
+
+Actors make up ideal components that can be used on a template.
+
+- [Elm Actor Framework - Templates](https://github.com/tricycle/elm-actor-framework-template)
+- [Elm Actor Framework - Templates - Html](https://github.com/tricycle/elm-actor-framework-template-html)
+- [Elm Actor Framework - Templates - Markdown](https://github.com/tricycle/elm-actor-framework-template-markdown)
+
 ---
 
 ## Tutorial
