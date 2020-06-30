@@ -1,6 +1,9 @@
 # Elm Actor Framework
 
-An Actor Model implementation on top of the Elm Application Framework
+This library allows you to more easily re-use components between Elm applications
+by moving state, views and other logic into components themselves. Helping to
+avoid the top heavy application that the traditional Elm architecture can lead
+to and that becomes hard to maintain.
 
 ![Component > Actor > Process](https://github.com/tricycle/elm-actor-framework/blob/assets/component_actor_process.png)
 
@@ -37,9 +40,9 @@ describing how the Elm Actor Framework works, or better; how to use it.
 
 The concept of a `Component` within this little framework is as followed;
 
-A component describes what what its state looks like *(Model)*, its initial 
-state and action *(init)* , how it can *update* its state based on messages 
-*(MsgIn)* and what it outputs *(view)*.
+A component describes what what its state looks like _(Model)_, its initial
+state and action _(init)_ , how it can _update_ its state based on messages
+_(MsgIn)_ and what it outputs _(view)_.
 
 Hopefully this sounds very familiar. It follows the same pattern as any other
 Elm framework. Without too much work a simple Elm application could be ported to
@@ -49,16 +52,18 @@ A neat thing about `Component`s is that they could be interchangeable between
 different application.
 
 Let's start with setting up a simple **Counter** `Component`.
-The `Component` is a record which signature can be imported from the 
+The `Component` is a record which signature can be imported from the
 `Framework.Actor` module. It looks almost the same as Elm.Browser's embed
 function so this is going to be easy!
 
 ---
+
 `File: Component/Counter.elm`
 
 ```elm
-module Component.Counter exposing (component, Model, MsgIn)
+module Component.Counter exposing (Model, MsgIn, component)
 ```
+
 We are going to use the Component record type from this package
 
 ```elm
@@ -69,13 +74,15 @@ This Component will output `Html`, but you decide what your Component will outpu
 You could just output Strings for example or perhaps you prefer using elm-ui!
 
 ```elm
-import Html exposing (Html, div, button, text)
+import Html exposing (Html, button, div, text)
 import Html.Events exposing (onClick)
 ```
 
 Our Counters `Model` will be an alias for an Integer.
+
 ```elm
-type alias Model = Int
+type alias Model =
+    Int
 ```
 
 Our Counter can `Increment` or `Decrement` its state using these `msg`'s.
@@ -90,10 +97,10 @@ type MsgIn
 
 Our Component doesn't use `appFlags` so we can tell it to never expect
 anything by giving it the `()` type. We also opt-out of using `msgOut` using
-the same technique 
+the same technique
 
 ```elm
-component: Component () Model MsgIn () (Html msg) msg
+component : Component () Model MsgIn () (Html msg) msg
 component =
     { init = init
     , update = update
@@ -106,9 +113,9 @@ The initial state of our Counter is 0. We aren't returning any msgOuts or
 cmd's just yet.
 
 ```elm
-init: a -> (Model, List (), Cmd msg)
+init : a -> ( Model, List (), Cmd msg )
 init _ =
-    (0, [], Cmd.none)
+    ( 0, [], Cmd.none )
 ```
 
 Given a `msgIn` and our current state (Model) we can return a new updated state
@@ -124,22 +131,21 @@ update msgIn model =
             ( model - 1, [], Cmd.none )
 ```
 
-Our view function renders our counter's current value and two buttons that can 
+Our view function renders our counter's current value and two buttons that can
 decrement or increment the counters value.
 The view function gets a function provided that knows how to turn internal
-`MsgIn`'s into higher level `msg`'s. We need to use Html.map is this case to 
+`MsgIn`'s into higher level `msg`'s. We need to use Html.map is this case to
 comply with the expected return type.
 
 ```elm
 view : (MsgIn -> msg) -> Model -> a -> Html msg
 view toSelf model _ =
     div []
-        [ Html.button [ HtmlE.onClick Decrement ]  [ Html.text "-" ]
+        [ Html.button [ HtmlE.onClick Decrement ] [ Html.text "-" ]
         , Html.span [] [ String.fromInt model |> Html.text ]
-        , Html.button [ HtmlE.onClick Increment ]  [ Html.text "+" ]
+        , Html.button [ HtmlE.onClick Increment ] [ Html.text "+" ]
         ]
         |> Html.map toSelf
-
 ```
 
 In the module above we have described a simple **Counter** `Component` that
@@ -158,6 +164,7 @@ of our Program.
 />
 
 ---
+
 `File: Main.elm`
 
 ```elm
@@ -166,7 +173,7 @@ module Main exposing (main)
 import Html exposing (div)
 ```
 
-Elm's `main` function expects a `Program` to be returned. The 
+Elm's `main` function expects a `Program` to be returned. The
 `Framework.Browser` module offers multiple ways of creating such a Program, and
 mirrors the behaviour described on [Elm's - Browser package](https://package.elm-lang.org/packages/elm/browser/latest/Browser).
 
@@ -177,24 +184,24 @@ import Framework.Browser exposing (Program, element)
 We will also require the `Framework.Message` and `Framework.Actor` modules later on.
 
 ```elm
-import Framework.Message exposing (FrameworkMessage, noOperation, batch, spawn, addToView)
-import Framework.Actor exposing (Actor, Process, Pid, fromComponent)
+import Framework.Actor exposing (Actor, Pid, Process, fromComponent)
+import Framework.Message exposing (FrameworkMessage, addToView, batch, noOperation, spawn)
 ```
 
-Import the Counter we just created, not that the Counter module itself doesn't 
+Import the Counter we just created, not that the Counter module itself doesn't
 depend on any types we will define here. The counter we just created could come
 from a different application and we can reuse our Counter on a different
 application as well.
 
 ```elm
-import Component.Counter as Counter 
+import Component.Counter as Counter
 ```
 
 We are going to use the element function here that on its turn uses the Elm's -
 Browser package to create our Elm application.
 https://package.elm-lang.org/packages/elm/browser/latest/Browser#element
 
-For now we skip the elmFlags appFlags and appAddresses definitions by 
+For now we skip the elmFlags appFlags and appAddresses definitions by
 supplying `()`.
 
 ```elm
@@ -213,8 +220,8 @@ Our Program signature tells us we need to supply it a type representing our
 application.
 
 ```elm
-type AppActors =
-  Counter
+type AppActors
+    = Counter
 ```
 
 Our components hold define and deal their own state (Model) but it's our
@@ -222,17 +229,17 @@ application that eventually needs to store this. `appModel` is a type that
 can wrap our components Models.
 
 ```elm
-type AppModel =
-  CounterModel Counter.Model
+type AppModel
+    = CounterModel Counter.Model
 ```
 
-Just like the `appModel` our application has to deal with all of our components 
-`msgIn`'s. In a similar fashion of how our AppModel wraps our Counter.Model; 
+Just like the `appModel` our application has to deal with all of our components
+`msgIn`'s. In a similar fashion of how our AppModel wraps our Counter.Model;
 AppMsg wraps our Counter.MsgIn.
 
 ```elm
-type AppMsg = 
-  CounterMsg Counter.MsgIn
+type AppMsg
+    = CounterMsg Counter.MsgIn
 ```
 
 Now that we've dealt with our required types, we can start looking at
@@ -245,11 +252,11 @@ a more "discovering" order then perhaps logical or chronological.
 The first next "clue" we have is our missing `factory` implementation.
 A factory's signature looks like;
 
->```elm
->appActors
+> ```elm
+> appActors
 >  -> ( Pid, appFlags )
 >  -> ( appModel, FrameworkMessage appFlags appAddresses appActors appModel appMsg )
->```
+> ```
 
 We've already handled the type variables we see here when we defined our `Program`.
 And by creating a `Msg` type alias we don't have to repeat the `FrameworkMessage`
@@ -258,11 +265,13 @@ type every time.
 Our component doesn't care about it's Pid so we can simplify our implementation
 a little but by ignoring that Tuple all together.
 
->```elm
->type alias Msg = FrameworkMessage () () AppActors AppModel AppMsg
->
->factory: AppActors -> a -> (AppModel, Msg)
->```
+> ```elm
+> type alias Msg =
+>     FrameworkMessage () () AppActors AppModel AppMsg
+> 
+> 
+> factory : AppActors -> a -> ( AppModel, Msg )
+> ```
 
 Now the signature is a bit easier to talk about;
 Factory takes an `AppActors` and should give us back a function `a -> (AppModel, Msg)`.
@@ -278,6 +287,7 @@ The `fromComponent` function takes a record of functions that allow a
 `Component` to progress in to an `Actor`.
 
 The record requires the following functions;
+
 - `toAppModel: componentModel -> appModel`
   Given an componentModel return an appModel... Hey we've already got this
   covered! Our `AppModel`'s `CounterModel` takes `Counter.Model` as a value.
@@ -293,25 +303,24 @@ The record requires the following functions;
 The signature of an Actor combines a few type variables that we can get from our
 `Component` and a few that we have defined here on our actual App.
 
->```elm
+> ```elm
 > Actor appFlags componentModel appModel output frameworkMs
 > ```
 
-Knowing all this we can define our actor based on our *Counter* `Component`.
+Knowing all this we can define our actor based on our _Counter_ `Component`.
 
 I am going to call our actor `counter`.
 
 ```elm
-counter: Actor () Counter.Model AppModel (Html Msg) Msg
+counter : Actor () Counter.Model AppModel (Html Msg) Msg
 counter =
     fromComponent
-      { toAppModel = CounterModel
-      , toAppMsg = CounterMsg
-      , fromAppMsg = \(CounterMsg msgIn) -> Just msgIn
-      , onMsgOut = \_ -> noOperation
-      }
-      Counter.component
-
+        { toAppModel = CounterModel
+        , toAppMsg = CounterMsg
+        , fromAppMsg = \(CounterMsg msgIn) -> Just msgIn
+        , onMsgOut = \_ -> noOperation
+        }
+        Counter.component
 ```
 
 Now we have turned our `Component` in to an `Actor` by providing functions that
@@ -322,15 +331,15 @@ a function that provides us with the required signature and by creating our
 `counter` `Actor` we have done just that.
 
 ```elm
+type alias Msg =
+    FrameworkMessage () () AppActors AppModel AppMsg
 
-type alias Msg = FrameworkMessage () () AppActors AppModel AppMsg
 
-factory: AppActors -> ( Pid, () ) -> (AppModel, Msg)
+factory : AppActors -> ( Pid, () ) -> ( AppModel, Msg )
 factory actor =
     case actor of
         Counter ->
             counter.init
-
 ```
 
 Now we can obviously just return `counter.init` straight away, we don't need
@@ -340,7 +349,7 @@ way to handle multiple of them.
 Cool, so one down. Next is the `apply` function. The (simplified) signature
 looks like;
 
->```elm
+> ```elm
 > apply : appModel -> Process appModel output Msg
 > ```
 
@@ -356,12 +365,11 @@ We can get a `Process` from our freshly created `Actor` by using its `apply`
 function and providing its `componentModel`.
 
 ```elm
-apply: AppModel -> Process AppModel (Html Msg) Msg
+apply : AppModel -> Process AppModel (Html Msg) Msg
 apply appModel =
     case appModel of
         CounterModel counterModel ->
             counter.apply counterModel
-
 ```
 
 That's it, to easy!
@@ -371,7 +379,7 @@ Next up; `init`
 Just like the `init` function on our `Component` or on a typical Elm application
 `init` allows us to set an initial state of our Application.
 
-Unlike the other mentioned `init` functions our `init` should return a 
+Unlike the other mentioned `init` functions our `init` should return a
 `FrameworkMessage` though instead of a `Model`. But fear not because by calling
 these messages we update an predetermined framework model.
 
@@ -383,45 +391,42 @@ We can start our `Actors` by `spawn`-ing them.
 
 `spawn` on the `Framework.Message` module takes 3 arguments.
 
-- ```elm appFlags```
+- `elm appFlags`
   Just like a typical Elm app your actors could receive some flags at start up.
   We already set our app doesn't use though so we'll leave it to `()` for now.
-- ```appActors```
-  The actor you want to spawn  
-- ```(Pid -> Msg)```
+- `appActors`
+  The actor you want to spawn
+- `(Pid -> Msg)`
   A callback function that will provide the newly created `Pid`.
-  The `Pid` is the unique identifier of a process that can be used to send 
+  The `Pid` is the unique identifier of a process that can be used to send
   message to.
 
 When we do `spawn` our **Counter**'s we should also let the application know
 what to do with the output. For now we will add the output of our **Counter**'s
-straight on our application view using `addToView`. In other cases you might 
+straight on our application view using `addToView`. In other cases you might
 want a different Actor spawn different Actors.
 
 We can use `batch` to batch multiple `FrameworkMessage`'s in to a single one.
 The batch will be performed in order.
 
 ```elm
-init: flags -> Msg
+init : flags -> Msg
 init _ =
-    batch [
-       spawn () Counter addToView
-     , spawn () Counter addToView
-    ]
-
-
+    batch
+        [ spawn () Counter addToView
+        , spawn () Counter addToView
+        ]
 ```
 
 We're nearly there. All is left is to provide our main function with a `view`
 This should be very straight forward.
 
 ```elm
-view: List (Html Msg) -> Html Msg
+view : List (Html Msg) -> Html Msg
 view =
     div []
-
 ```
 
 An near identical demonstration of this Counter example can be found inside the
-`example` folder. There are also two more examples listed there that 
+`example` folder. There are also two more examples listed there that
 progressively utilise more of the frameworks capabilities.
