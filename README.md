@@ -1,5 +1,7 @@
 # Elm Actor Framework
 
+![Build Status](https://github.com/tricycle/elm-actor-framework/workflows/Continuous%20Integration/badge.svg) [![Elm package](https://img.shields.io/elm-package/v/tricycle/elm-actor-framework.svg)](https://package.elm-lang.org/packages/elm-actor-framework/latest/)
+
 This library allows you to more easily re-use components between Elm applications
 by moving state, views and other logic into components themselves. Helping to
 avoid the top heavy application that the traditional Elm architecture can lead
