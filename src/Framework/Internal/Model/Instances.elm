@@ -1,6 +1,7 @@
 module Framework.Internal.Model.Instances exposing
     ( Instances
     , empty
+    , fold
     , get
     , insert
     , remove
@@ -43,3 +44,8 @@ toPidCollection (Instances pidCollection) =
 fromPidCollection : PidCollection appModel -> Instances appModel
 fromPidCollection =
     Instances
+
+
+fold : (Pid -> appModel -> a -> a) -> a -> Instances appModel -> a
+fold f a =
+    toPidCollection >> PidCollection.fold f a

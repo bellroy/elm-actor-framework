@@ -3,6 +3,7 @@ module Framework.Internal.Model.PidCollectionTest exposing (suite)
 import Expect
 import Fixtures.Pid as Fixtures
 import Framework.Internal.Model.PidCollection as PidCollection
+import Framework.Internal.Pid as Pid
 import Test exposing (Test, describe, test)
 
 
@@ -15,6 +16,7 @@ suite =
         , test_remove
         , test_get
         , test_map
+        , test_fold
         ]
 
 
@@ -141,4 +143,19 @@ test_map =
                         |> PidCollection.get Fixtures.pid_1
                     )
                     (Just "1")
+        ]
+
+
+test_fold : Test
+test_fold =
+    describe "PidCollection fold"
+        [ test "PidCollection fold all values to something else" <|
+            \_ ->
+                Expect.equal
+                    (PidCollection.empty
+                        |> PidCollection.insert Fixtures.pid_1 "value1"
+                        |> PidCollection.insert Fixtures.pid_1_2 "value2"
+                        |> PidCollection.fold (\pid value result -> result ++ Pid.toString pid ++ value) ""
+                    )
+                    "Systemvalue12value2"
         ]

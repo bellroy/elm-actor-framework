@@ -1,6 +1,7 @@
 module Framework.Internal.Model.PidCollection exposing
     ( PidCollection
     , empty
+    , fold
     , get
     , insert
     , map
@@ -60,6 +61,11 @@ map f =
     toDict
         >> Dict.map (\_ -> Tuple.mapSecond f)
         >> fromDict
+
+
+fold : (Pid -> a -> b -> b) -> b -> PidCollection a -> b
+fold f b =
+    toDict >> Dict.foldl (\_ ( pid, a ) b_ -> f pid a b_) b
 
 
 toList : PidCollection a -> List ( Pid, a )

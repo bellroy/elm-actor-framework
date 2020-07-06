@@ -2,6 +2,7 @@ module Framework.Internal.Model exposing
     ( FrameworkModel
     , addToView
     , empty
+    , foldlInstances
     , getDocumentTitle
     , getInhabitants
     , getInstance
@@ -143,3 +144,12 @@ removePid pid model =
                     model.occupiedAddresses
         , views = List.filter (not << Pid.equals pid) model.views
     }
+
+
+foldlInstances :
+    (Pid -> appModel -> a -> a)
+    -> a
+    -> FrameworkModel appAddresses appModel
+    -> a
+foldlInstances f initial { instances } =
+    Instances.fold f initial instances
