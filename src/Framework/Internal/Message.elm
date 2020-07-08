@@ -176,7 +176,20 @@ filterNoOp :
     List (FrameworkMessage appFlags appAddresses appActors appModel appMsg)
     -> List (FrameworkMessage appFlags appAddresses appActors appModel appMsg)
 filterNoOp =
-    List.filter (\msg -> msg /= NoOp && msg /= Operate (Batch []))
+    List.filter (not << isNoOp)
+
+
+isNoOp : FrameworkMessage appFlags appAddresses appActors appModel appMsg -> Bool
+isNoOp msg =
+    case msg of
+        NoOp ->
+            True
+
+        Operate (Batch list) ->
+            List.all isNoOp list
+
+        _ ->
+            False
 
 
 toCmd : msg -> Cmd msg
