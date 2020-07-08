@@ -3,6 +3,7 @@ module Framework.Browser exposing
     , element
     , document
     , application
+    , FrameworkModel, toProgramRecord
     )
 
 {-|
@@ -25,6 +26,11 @@ module Framework.Browser exposing
 
   - [application](#application)
 
+**Utility**
+
+  - [FrameworkModel](#FrameworkModel)
+  - [toProgramRecord](#toProgramRecord)
+
 ---
 
 @docs Program
@@ -44,16 +50,22 @@ module Framework.Browser exposing
 
 @docs application
 
+
+# Utility
+
+@docs FrameworkModel, toProgramRecord
+
 -}
 
-import Browser exposing (UrlRequest)
+import Browser exposing (Document, UrlRequest)
 import Browser.Navigation exposing (Key)
 import Framework.Internal.Actor exposing (Process)
 import Framework.Internal.Message exposing (FrameworkMessage)
-import Framework.Internal.Model as Model exposing (FrameworkModel)
+import Framework.Internal.Model as Model
 import Framework.Internal.Pid exposing (Pid)
 import Framework.Internal.Render as Render
-import Framework.Internal.Update exposing (update)
+import Framework.Internal.Subscriptions as Subscriptions
+import Framework.Internal.Update as Update
 import Html exposing (Html)
 import Url exposing (Url)
 
@@ -91,15 +103,13 @@ element :
     -> Program elmFlags appFlags appAddresses appActors appModel appMsg
 element { init, factory, apply, view } =
     let
-        updateArgs =
-            { factory = factory
-            , apply = apply
-            }
+        record =
+            toProgramRecord { factory = factory, apply = apply }
     in
     Browser.element
-        { init = init >> (\msg -> update updateArgs Nothing msg Model.empty)
-        , update = update updateArgs Nothing
-        , subscriptions = getSubscriptions apply
+        { init = init >> record.init
+        , update = record.update
+        , subscriptions = record.subscriptions
         , view = view << Render.element apply
         }
 
@@ -123,18 +133,16 @@ document :
         -> List (Html (FrameworkMessage appFlags appAddresses appActors appModel appMsg))
     }
     -> Program elmFlags appFlags appAddresses appActors appModel appMsg
-document args =
+document { factory, apply, init, view } =
     let
-        updateArgs =
-            { factory = args.factory
-            , apply = args.apply
-            }
+        record =
+            toProgramRecord { factory = factory, apply = apply }
     in
     Browser.document
-        { init = args.init >> (\msg -> update updateArgs Nothing msg Model.empty)
-        , update = update updateArgs Nothing
-        , subscriptions = getSubscriptions args.apply
-        , view = Render.application args.apply args.view
+        { init = init >> record.init
+        , update = record.update
+        , subscriptions = record.subscriptions
+        , view = record.view view
         }
 
 
@@ -164,47 +172,67 @@ application :
         -> FrameworkMessage appFlags appAddresses appActors appModel appMsg
     }
     -> Program elmFlags appFlags appAddresses appActors appModel appMsg
-application args =
+application { factory, apply, init, view, onUrlRequest, onUrlChange } =
     let
-        updateArgs =
-            { factory = args.factory
-            , apply = args.apply
-            }
+        record =
+            toProgramRecord { factory = factory, apply = apply }
     in
     Browser.application
-        { init =
-            \elmFlags url key ->
-                args.init elmFlags url key
-                    |> (\msg -> update updateArgs Nothing msg Model.empty)
-        , update = update updateArgs Nothing
-        , subscriptions = getSubscriptions args.apply
-        , view = Render.application args.apply args.view
-        , onUrlRequest = args.onUrlRequest
-        , onUrlChange = args.onUrlChange
+        { init = \elmFlags url key -> init elmFlags url key |> record.init
+        , update = record.update
+        , subscriptions = record.subscriptions
+        , view = record.view view
+        , onUrlRequest = onUrlRequest
+        , onUrlChange = onUrlChange
         }
 
 
-getSubscriptions :
-    (appModel
-     -> Process appModel output (FrameworkMessage appFlags appAddresses appActors appModel appMsg)
-    )
-    -> FrameworkModel appAddresses appModel
-    -> Sub (FrameworkMessage appFlags appAddresses appActors appModel appMsg)
-getSubscriptions apply =
-    Model.foldlInstances
-        (\pid appModel listOfSubs ->
-            let
-                process =
-                    apply appModel
 
-                processSubscriptions =
-                    process.subscriptions pid
-            in
-            if processSubscriptions == Sub.none then
-                listOfSubs
+---
 
-            else
-                processSubscriptions :: listOfSubs
-        )
-        []
-        >> Sub.batch
+
+{-| An alias for the Internal Framework Model
+-}
+type alias FrameworkModel appAddresses appModel =
+    Model.FrameworkModel appAddresses appModel
+
+
+{-| Returns a record that is ready to be used on one of the elm/browsers creation functions.
+
+This can be used to roll your own Program
+
+-}
+toProgramRecord :
+    { factory : appActors -> ( Pid, appFlags ) -> ( appModel, FrameworkMessage appFlags appAddresses appActors appModel appMsg )
+    , apply : appModel -> Process appModel output (FrameworkMessage appFlags appAddresses appActors appModel appMsg)
+    }
+    ->
+        { init :
+            FrameworkMessage appFlags appAddresses appActors appModel appMsg
+            -> ( FrameworkModel appAddresses appModel, Cmd (FrameworkMessage appFlags appAddresses appActors appModel appMsg) )
+        , update :
+            FrameworkMessage appFlags appAddresses appActors appModel appMsg
+            -> FrameworkModel appAddresses appModel
+            -> ( FrameworkModel appAddresses appModel, Cmd (FrameworkMessage appFlags appAddresses appActors appModel appMsg) )
+        , subscriptions : FrameworkModel appAddresses appModel -> Sub (FrameworkMessage appFlags appAddresses appActors appModel appMsg)
+        , view : (List output -> List (Html msg)) -> FrameworkModel appAddresses appModel -> Document msg
+        }
+toProgramRecord args =
+    let
+        init msg =
+            update msg Model.empty
+
+        update =
+            Update.update args Nothing
+
+        subscriptions =
+            Subscriptions.getSubscriptions args.apply
+
+        view =
+            Render.application args.apply
+    in
+    { init = init
+    , update = update
+    , subscriptions = subscriptions
+    , view = view
+    }
