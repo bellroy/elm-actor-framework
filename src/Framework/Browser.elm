@@ -3,7 +3,7 @@ module Framework.Browser exposing
     , element
     , document
     , application
-    , FrameworkModel, toProgramRecord
+    , FrameworkModel, toProgramRecord, getInstance
     )
 
 {-|
@@ -25,11 +25,6 @@ module Framework.Browser exposing
 **Application**
 
   - [application](#application)
-
-**Utility**
-
-  - [FrameworkModel](#FrameworkModel)
-  - [toProgramRecord](#toProgramRecord)
 
 ---
 
@@ -53,7 +48,7 @@ module Framework.Browser exposing
 
 # Utility
 
-@docs FrameworkModel, toProgramRecord
+@docs FrameworkModel, toProgramRecord, getInstance
 
 -}
 
@@ -236,3 +231,9 @@ toProgramRecord args =
     , subscriptions = subscriptions
     , view = view
     }
+
+
+{-| -}
+getInstance : Pid -> FrameworkModel appAddresses appModel -> Maybe appModel
+getInstance =
+    Model.getInstance
