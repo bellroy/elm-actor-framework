@@ -3,7 +3,7 @@ module Framework.Message exposing
     , addToView, populateAddress
     , removeFromView, removeFromAddress
     , sendToPid, sendToAddress
-    , batch, noOperation, toCmd
+    , batch, noOperation, toCmd, filterMsgIns
     , updateDocumentTitle
     , FrameworkMessage
     )
@@ -31,6 +31,7 @@ module Framework.Message exposing
   - [batch](#batch)
   - [noOperation](#noOperation)
   - [toCmd](#toCmd)
+  - [filterMsgIns](#filterMsgIns)
 
 **Document**
 
@@ -55,7 +56,7 @@ module Framework.Message exposing
 
 # Utility
 
-@docs batch, noOperation, toCmd
+@docs batch, noOperation, toCmd, filterMsgIns
 
 
 # Document
@@ -240,3 +241,10 @@ This only works when using Browser.document or Browser.application.
 updateDocumentTitle : String -> FrameworkMessage appFlags appAddresses appActors appModel appMsg
 updateDocumentTitle =
     Internal.updateDocumentTitle
+
+
+{-| Filter out your "MsgIn"s from a FrameworkMessage
+-}
+filterMsgIns : (appMsg -> Maybe msgIn) -> FrameworkMessage appFlags appAddresses appActors appModel appMsg -> List msgIn
+filterMsgIns =
+    Internal.filterMsgIns

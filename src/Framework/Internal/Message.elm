@@ -5,6 +5,7 @@ module Framework.Internal.Message exposing
     , batch
     , command
     , filterAppMsgs
+    , filterMsgIns
     , filterNoOp
     , inContextOfPid
     , noOperation
@@ -35,8 +36,8 @@ type FrameworkMessage appFlags appAddresses appActors appModel appMsg
 type FrameworkOperation appFlags appAddresses appActors appModel appMsg
     = Batch (List (FrameworkMessage appFlags appAddresses appActors appModel appMsg))
     | Command (Cmd (FrameworkMessage appFlags appAddresses appActors appModel appMsg))
-    | ForAddress appAddresses (FrameworkMessage appFlags appAddresses appActors appModel appMsg)
     | ForPid Pid (FrameworkMessage appFlags appAddresses appActors appModel appMsg)
+    | ForAddress appAddresses (FrameworkMessage appFlags appAddresses appActors appModel appMsg)
     | Spawn appFlags appActors (Pid -> FrameworkMessage appFlags appAddresses appActors appModel appMsg)
     | StopProcess Pid
     | AddToView Pid
@@ -145,6 +146,27 @@ filterAppMsgs msg =
             []
 
 
+filterMsgIns : (appMsg -> Maybe msgIn) -> FrameworkMessage appFlags appAddresses appActors appModel appMsg -> List msgIn
+filterMsgIns mapMsg frameworkMessage =
+    case frameworkMessage of
+        AppMsg appMsg ->
+            mapMsg appMsg
+                |> Maybe.map List.singleton
+                |> Maybe.withDefault []
+
+        Operate (Batch msgs) ->
+            List.concatMap (filterMsgIns mapMsg) msgs
+
+        Operate (ForPid _ msg) ->
+            filterMsgIns mapMsg msg
+
+        Operate (ForAddress _ msg) ->
+            filterMsgIns mapMsg msg
+
+        _ ->
+            []
+
+
 stopProcess : Pid -> FrameworkMessage appFlags appAddresses appActors appModel appMsg
 stopProcess =
     StopProcess >> operate
@@ -154,7 +176,20 @@ filterNoOp :
     List (FrameworkMessage appFlags appAddresses appActors appModel appMsg)
     -> List (FrameworkMessage appFlags appAddresses appActors appModel appMsg)
 filterNoOp =
-    List.filter (\msg -> msg /= NoOp && msg /= Operate (Batch []))
+    List.filter (not << isNoOp)
+
+
+isNoOp : FrameworkMessage appFlags appAddresses appActors appModel appMsg -> Bool
+isNoOp msg =
+    case msg of
+        NoOp ->
+            True
+
+        Operate (Batch list) ->
+            List.all isNoOp list
+
+        _ ->
+            False
 
 
 toCmd : msg -> Cmd msg
