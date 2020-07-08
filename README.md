@@ -7,7 +7,7 @@ by moving state, views and other logic into components themselves. Helping to
 avoid the top heavy application that the traditional Elm architecture can lead
 to and that becomes hard to maintain.
 
-![Component > Actor > Process](https://github.com/tricycle/elm-actor-framework/blob/assets/component_actor_process.png)
+![Component > Actor > Process](https://raw.githubusercontent.com/tricycle/elm-actor-framework/assets/component_actor_process.png)
 
 ## Documentation
 
@@ -369,7 +369,7 @@ Well first, what is an Process within the scope of this package?
 
 An Process means an Actor + State. So in other words a "running" Actor.
 
-![Component > Actor > Process](https://github.com/tricycle/elm-actor-framework/blob/assets/component_actor_process.png)
+![Component > Actor > Process](https://raw.githubusercontent.com/tricycle/elm-actor-framework/assets/component_actor_process.png)
 
 We can get a `Process` from our freshly created `Actor` by using its `apply`
 function and providing its `componentModel`.
