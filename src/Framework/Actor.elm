@@ -4,7 +4,7 @@ module Framework.Actor exposing
     , ProcessMethods, Process
     , Pid, spawnedBy
     , altInit, altUpdate, altSubscriptions, altView
-    , pidCompare, pidEquals, pidToInt, pidToString
+    , pidSystem, pidCompare, pidEquals, pidToInt, pidToString
     )
 
 {-|
@@ -36,6 +36,7 @@ module Framework.Actor exposing
 
 **Process Utility**
 
+  - [pidSystem](#pidSystem)
   - [pidCompare](#pidCompare)
   - [pidEquals](#pidEquals)
   - [pidToInt](#pidToInt)
@@ -75,7 +76,7 @@ The PID also holds information about who spawned (started) the process.
 
 # Process Utility
 
-@docs pidCompare, pidEquals, pidToInt, pidToString
+@docs pidSystem, pidCompare, pidEquals, pidToInt, pidToString
 
 -}
 
@@ -197,6 +198,13 @@ fromComponent =
 -}
 type alias Pid =
     Internal.Pid
+
+
+{-| The System's Pid
+-}
+pidSystem : Pid
+pidSystem =
+    Internal.system
 
 
 {-| Retrieve the Pid responsible for spawning the given Pid
