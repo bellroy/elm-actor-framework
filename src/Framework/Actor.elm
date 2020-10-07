@@ -4,7 +4,7 @@ module Framework.Actor exposing
     , ProcessMethods, Process
     , Pid, spawnedBy
     , altInit, altUpdate, altSubscriptions, altView
-    , pidSystem, pidCompare, pidEquals, pidToInt, pidToString
+    , pidSystem, pidCompare, pidEquals, pidToInt, pidToString, unsafePidFromInt
     )
 
 {-|
@@ -41,6 +41,7 @@ module Framework.Actor exposing
   - [pidEquals](#pidEquals)
   - [pidToInt](#pidToInt)
   - [pidToString](#pidToString)
+  - [unsafePidFromInt](#unsafePidFromInt)
 
 ---
 
@@ -76,7 +77,7 @@ The PID also holds information about who spawned (started) the process.
 
 # Process Utility
 
-@docs pidSystem, pidCompare, pidEquals, pidToInt, pidToString
+@docs pidSystem, pidCompare, pidEquals, pidToInt, pidToString, unsafePidFromInt
 
 -}
 
@@ -240,3 +241,10 @@ pidToInt =
 pidToString : Pid -> String
 pidToString =
     Internal.toString
+
+
+{-| Create a Pid from an Int, should only be used when writing tests
+-}
+unsafePidFromInt : Int -> Pid
+unsafePidFromInt =
+    Internal.unsafePidFromInt

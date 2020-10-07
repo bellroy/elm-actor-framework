@@ -7,6 +7,7 @@ module Framework.Internal.Pid exposing
     , toInt
     , toSpawnedBy
     , toString
+    , unsafePidFromInt
     )
 
 
@@ -67,3 +68,8 @@ toSpawnedBy pid =
 
         Pid { spawnedBy } ->
             spawnedBy
+
+
+unsafePidFromInt : Int -> Pid
+unsafePidFromInt id =
+    Pid { id = id, spawnedBy = System }
