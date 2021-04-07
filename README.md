@@ -1,25 +1,25 @@
 # Elm Actor Framework
 
-![Build Status](https://github.com/tricycle/elm-actor-framework/workflows/Continuous%20Integration/badge.svg) [![Elm package](https://img.shields.io/elm-package/v/tricycle/elm-actor-framework.svg)](https://package.elm-lang.org/packages/tricycle/elm-actor-framework/latest/)
+![Build Status](https://github.com/bellroy/elm-actor-framework/workflows/Continuous%20Integration/badge.svg) [![Elm package](https://img.shields.io/elm-package/v/bellroy/elm-actor-framework.svg)](https://package.elm-lang.org/packages/bellroy/elm-actor-framework/latest/)
 
 This library allows you to more easily re-use components between Elm applications
 by moving state, views and other logic into components themselves. Helping to
 avoid the top heavy application that the traditional Elm architecture can lead
 to and that becomes hard to maintain.
 
-![Component > Actor > Process](https://raw.githubusercontent.com/tricycle/elm-actor-framework/assets/component_actor_process.png)
+![Component > Actor > Process](https://raw.githubusercontent.com/bellroy/elm-actor-framework/assets/component_actor_process.png)
 
 ## Documentation
 
 Start with the (tutorial)(#Tutorial) in this Readme file.
 
-The API documentation is hosted on the [Elm package website](https://package.elm-lang.org/packages/tricycle/elm-actor-framework/latest).
+The API documentation is hosted on the [Elm package website](https://package.elm-lang.org/packages/bellroy/elm-actor-framework/latest).
 
 ## Example Applications
 
 There are three examples in the example folder.
 
-The output can be [seen online](https://tricycle.github.io/elm-actor-framework)
+The output can be [seen online](https://bellroy.github.io/elm-actor-framework)
 and it's easy to run them locally;
 
 - Clone this repository.
@@ -35,9 +35,9 @@ and it's easy to run them locally;
 
 Actors make up ideal components that can be used on a template.
 
-- [Elm Actor Framework - Templates](https://github.com/tricycle/elm-actor-framework-template)
-- [Elm Actor Framework - Templates - Html](https://github.com/tricycle/elm-actor-framework-template-html)
-- [Elm Actor Framework - Templates - Markdown](https://github.com/tricycle/elm-actor-framework-template-markdown)
+- [Elm Actor Framework - Templates](https://github.com/bellroy/elm-actor-framework-template)
+- [Elm Actor Framework - Templates - Html](https://github.com/bellroy/elm-actor-framework-template-html)
+- [Elm Actor Framework - Templates - Markdown](https://github.com/bellroy/elm-actor-framework-template-markdown)
 
 ---
 
@@ -278,8 +278,8 @@ a little but by ignoring that Tuple all together.
 > ```elm
 > type alias Msg =
 >     FrameworkMessage () () AppActors AppModel AppMsg
-> 
-> 
+>
+>
 > factory : AppActors -> a -> ( AppModel, Msg )
 > ```
 
@@ -369,7 +369,7 @@ Well first, what is an Process within the scope of this package?
 
 An Process means an Actor + State. So in other words a "running" Actor.
 
-![Component > Actor > Process](https://raw.githubusercontent.com/tricycle/elm-actor-framework/assets/component_actor_process.png)
+![Component > Actor > Process](https://raw.githubusercontent.com/bellroy/elm-actor-framework/assets/component_actor_process.png)
 
 We can get a `Process` from our freshly created `Actor` by using its `apply`
 function and providing its `componentModel`.

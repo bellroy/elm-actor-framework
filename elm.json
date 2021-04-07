@@ -1,6 +1,6 @@
 {
     "type": "package",
-    "name": "tricycle/elm-actor-framework",
+    "name": "bellroy/elm-actor-framework",
     "summary": "Implements an Actor Model Framework",
     "license": "BSD-3-Clause",
     "version": "1.4.0",
